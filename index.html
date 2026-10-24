@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f7f4" />
+    <meta name="description" content="A calmer way to build your math practice. Learn, solve, and see your progress with FUDI." />
+    <title>FUDI — Math, made clearer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#overview" aria-label="FUDI home" data-view="overview">
+          <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand-name">fudi<span>.</span></span>
+          <span class="brand-tag">MATH STUDIO</span>
+        </a>
+
+        <div class="side-label">WORKSPACE</div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-link is-active" data-view="overview"><span class="nav-icon icon-grid">▦</span><span>Overview</span></button>
+          <button class="nav-link" data-view="learn"><span class="nav-icon">◫</span><span>Learn</span><span class="nav-count">8</span></button>
+          <button class="nav-link" data-view="practice"><span class="nav-icon">✳</span><span>Daily practice</span></button>
+          <button class="nav-link" data-view="notebook"><span class="nav-icon">▤</span><span>My notebook</span></button>
+          <button class="nav-link" data-view="progress"><span class="nav-icon">⌁</span><span>Progress</span></button>
+        </nav>
+
+        <div class="side-label path-label">YOUR LEARNING PATH <button class="tiny-add" aria-label="Browse courses" data-view="learn">+</button></div>
+        <div class="path-list">
+          <button class="path-item selected" data-view="learn" data-topic="derivatives"><span class="path-dot dot-lilac"></span>Calculus I<span class="path-chevron">›</span></button>
+          <button class="path-item" data-view="learn" data-topic="linear-algebra"><span class="path-dot dot-peach"></span>Linear algebra<span class="path-chevron">›</span></button>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+        <div class="streak-card">
+          <div class="streak-top"><span class="streak-emoji">✦</span><span class="streak-kicker">YOUR STREAK</span><span class="streak-days"><b id="streak-count">0</b> days</span></div>
+          <div class="streak-copy">A little practice adds up.<br />Keep your rhythm going.</div>
+          <div class="streak-week" id="streak-week" aria-label="Weekly practice days"></div>
+        </div>
+        <div class="profile-button"><span class="avatar">F</span><span class="profile-text"><b>Your FUDI space</b><small>Saved on this device</small></span></div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <button class="mobile-menu" id="mobile-menu" aria-label="Open navigation"><span></span><span></span></button>
+          <div class="crumb"><span>Workspace</span><b>/</b><strong id="crumb-current">Overview</strong></div>
+          <div class="top-actions">
+            <label class="search-box"><span class="search-icon">⌕</span><input id="global-search" type="search" placeholder="Search topics..." autocomplete="off" /><kbd>⌘ K</kbd></label>
+            <button class="icon-button help-button" aria-label="Help" title="A calm place to learn math">?</button>
+          </div>
+        </header>
+
+        <div class="page-wrap">
+          <section class="page-view is-visible" id="view-overview">
+            <div class="welcome-row">
+              <div><div class="eyebrow"><span class="eyebrow-dot"></span>YOUR LEARNING SPACE</div><h1>Math, at your pace<span class="period">.</span></h1><p class="welcome-sub">A little practice today goes a long way.</p></div>
+              <button class="button button-primary" data-action="resume"><span>Resume learning</span><span class="button-arrow">↗</span></button>
+            </div>
+
+            <div class="stat-grid">
+              <article class="stat-card"><div class="stat-head"><span>Study streak</span><span class="stat-symbol symbol-orange">✳</span></div><div class="stat-value"><b id="overview-streak">0</b><small>days</small></div><div class="stat-foot"><span class="mini-bars" id="mini-week-bars"></span><span>Practice at your pace</span></div></article>
+              <article class="stat-card"><div class="stat-head"><span>Problems solved</span><span class="stat-symbol symbol-lilac">⌘</span></div><div class="stat-value"><b id="solved-count">0</b><small>this week</small></div><div class="stat-foot"><span class="stat-trend" id="weekly-correct">0</span><span>correct answers</span></div></article>
+              <article class="stat-card"><div class="stat-head"><span>Lessons completed</span><span class="stat-symbol symbol-green">◷</span></div><div class="stat-value"><b id="lessons-count">0</b><small>so far</small></div><div class="stat-foot"><span class="stat-trend" id="topics-count">0 topics</span><span>explored</span></div></article>
+              <article class="stat-card"><div class="stat-head"><span>Practice accuracy</span><span class="stat-symbol symbol-blue">✧</span></div><div class="stat-value level-value"><b id="accuracy-value">—</b></div><div class="stat-foot"><span class="level-track"><i id="accuracy-track" style="width:0%"></i></span><span>with each try</span></div></article>
+            </div>
+
+            <div class="content-grid">
+              <div class="primary-column">
+                <div class="section-heading"><div><div class="eyebrow">PICK UP WHERE YOU LEFT OFF</div><h2>Your next step</h2></div><button class="text-link" data-view="learn">All lessons <span>↗</span></button></div>
+                <article class="continue-card">
+                  <div class="continue-copy">
+                    <div class="tag-row"><span class="pill pill-lilac">CALCULUS I</span><span class="lesson-meta">UNIT 02 <span>·</span> 12 MIN</span></div>
+                    <h3>The chain<br />rule<span class="period">.</span></h3>
+                    <p>Break a complicated change into smaller, simpler changes.</p>
+                    <div class="lesson-progress"><div class="progress-label"><span>Lesson progress</span><b id="current-lesson-progress">0%</b></div><div class="progress-track"><i id="current-lesson-track" style="width:0%"></i></div></div>
+                    <button class="button button-dark" data-action="resume">Continue lesson <span class="button-arrow">→</span></button>
+                  </div>
+                  <div class="continue-art" aria-hidden="true"><div class="art-circle circle-back"></div><div class="art-circle circle-front"></div><svg viewBox="0 0 400 270" role="img"><path class="curve-grid" d="M18 220H380M38 25V245M38 180C110 180 110 150 156 150S208 102 242 102 300 38 365 38"/><path class="curve-main" d="M38 180C110 180 110 150 156 150S208 102 242 102 300 38 365 38"/><circle cx="156" cy="150" r="7"/><circle cx="242" cy="102" r="7"/><path class="tangent" d="M112 181L202 118M207 137L279 71"/></svg><div class="formula-card"><span>f′(g(x)) · g′(x)</span><small>THE CHAIN RULE</small></div><div class="art-caption">one change<br />inside another</div></div>
+                </article>
+
+                <div class="section-heading path-heading"><div><div class="eyebrow">BUILT AROUND YOU</div><h2>Your learning path</h2></div><button class="text-link" data-view="learn">Explore all <span>↗</span></button></div>
+                <div class="course-grid" id="course-grid">
+                  <button class="course-card course-calc" data-topic-card="derivatives"><span class="course-icon">∫</span><span class="course-status">CALCULUS <i></i></span><b>Foundations &amp; calculus</b><small>Limits, derivatives &amp; integrals</small><span class="course-bottom"><span class="course-progress"><i id="course-progress-calc" style="width:0%"></i></span><span id="course-label-calc">Start here</span></span></button>
+                  <button class="course-card course-algebra" data-topic-card="linear-algebra"><span class="course-icon">⊞</span><span class="course-status">LINEAR ALGEBRA <i></i></span><b>Vectors &amp; matrices</b><small>Products, systems &amp; spaces</small><span class="course-bottom"><span class="course-progress"><i id="course-progress-algebra" style="width:0%"></i></span><span id="course-label-algebra">Start here</span></span></button>
+                  <button class="course-card course-multivar" data-topic-card="multivariable"><span class="course-icon">∂</span><span class="course-status">ADVANCED <i></i></span><b>Multivariable</b><small>Change across dimensions</small><span class="course-bottom"><span class="course-progress"><i id="course-progress-multivar" style="width:0%"></i></span><span id="course-label-multivar">Start here</span></span></button>
+                </div>
+              </div>
+
+              <aside class="right-column">
+                <article class="week-card"><div class="section-heading compact"><div><div class="eyebrow">STEADY WINS</div><h2>This week</h2></div><button class="dots-button" aria-label="Weekly activity options" data-view="progress">···</button></div><div class="week-total"><b id="week-total">0</b><span>problems</span><small id="week-subtitle">Your practice will appear here.</small></div><div class="chart-area"><div class="chart-y"><span>5</span><span>3</span><span>0</span></div><div class="chart-bars" id="week-chart" aria-label="Problems solved each day"></div></div><div class="chart-legend"><span><i></i>Correct answers</span><span class="chart-goal" id="week-label">This week</span></div></article>
+
+                <article class="practice-card"><div class="practice-top"><div><div class="eyebrow">A QUICK WARM-UP</div><h2>Today's practice</h2></div><span class="practice-spark">✳</span></div><div class="practice-topic"><span id="dashboard-topic">DERIVATIVES · EASY</span><span>1 QUESTION</span></div><p id="dashboard-question">Generate a quick problem to get started.</p><div class="practice-input-row"><input id="answer-input" type="text" inputmode="decimal" placeholder="Your answer" aria-label="Your answer" /><button id="check-answer" class="check-button" aria-label="Check answer">→</button></div><div class="answer-feedback" id="answer-feedback" aria-live="polite"></div><div class="practice-footer"><span id="question-order">Quick warm-up</span><button id="new-question" class="text-link">New question ↻</button></div></article>
+
+                <article class="voice-card"><div class="voice-icon">♫</div><div class="voice-copy"><b>Learn by listening</b><span>Hear a quick explanation of derivatives.</span><button id="voice-button" class="voice-link"><span>▶</span> Play 1 min audio</button></div><div class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+              </aside>
+            </div>
+          </section>
+
+          <section class="page-view" id="view-learn"></section>
+          <section class="page-view" id="view-practice"></section>
+          <section class="page-view" id="view-notebook"></section>
+          <section class="page-view" id="view-progress"></section>
+        </div>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="notebook.js" defer></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>
