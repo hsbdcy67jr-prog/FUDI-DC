@@ -1,0 +1,223 @@
+{
+  "foundations": [
+    {
+      "title": "Solve a linear equation",
+      "path": "Contrib/Mizzou/College_Algebra/Equations_Linear/Var4.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Solve a linear equation",
+      "path": "Contrib/Mizzou/College_Algebra/Equations_Linear/Var5.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Solve a linear equation",
+      "path": "Contrib/Mizzou/College_Algebra/Equations_Linear/Var6.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "algebra": [
+    {
+      "title": "Linear equations",
+      "path": "Contrib/Mizzou/College_Algebra/Equations_Linear/Var4.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Rational equations",
+      "path": "Contrib/Mizzou/College_Algebra/Equations_Rational/8.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Complex equations",
+      "path": "Contrib/SVSU/College_Algebra/complex/equation2.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "geometry": [
+    {
+      "title": "Triangle area",
+      "path": "Contrib/MountAllison/1-A_Areas_Volumes_and_the_Cross_Product/triangle_area_r2.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Triangle area",
+      "path": "Contrib/MountAllison/1-A_Areas_Volumes_and_the_Cross_Product/triangle_area_r3.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Triangle perimeter and area",
+      "path": "Contrib/MountAllison/1-A_Areas_Volumes_and_the_Cross_Product/triangle_area_r3.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "trigonometry": [
+    {
+      "title": "Cosine ratio in a triangle",
+      "path": "Contrib/CUNY/CityTech/CollegeAlgebra_Trig/TrigonometryRatios/solve-cosine.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Trigonometric functions",
+      "path": "Contrib/CUNY/CityTech/Precalculus/setTrigonometry_-_Graphing_Phase_Shift/short-answer-phaseshift-cosine.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Trigonometric functions",
+      "path": "Contrib/CUNY/CityTech/Precalculus/setTrigonometry_-_Graphing_Period/ggb-period-cosine.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "precalculus": [
+    {
+      "title": "Function composition",
+      "path": "Contrib/CUNY/CityTech/Precalculus/setOperationsonFunctions/functions-composition.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Function operations",
+      "path": "Contrib/CUNY/CityTech/Precalculus/setOperationsonFunctions/intro-functions-add.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Function domains",
+      "path": "Contrib/CUNY/CityTech/Precalculus/setOperationsonFunctions/functions-composition-domain.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "limits": [
+    {
+      "title": "Limit laws",
+      "path": "Contrib/Hope/Calc1/02-02-Limits/Limit-laws-01.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Trigonometric limits",
+      "path": "Contrib/Hope/Calc1/02-02-Limits/Trig-limit-01.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Limits at infinity",
+      "path": "Contrib/CSUN/Calculus/Limits_at_Infinity_1.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "derivatives": [
+    {
+      "title": "Derivative rules",
+      "path": "Contrib/UMN-Morris/MSAF/derivative_rules.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Product rule",
+      "path": "Contrib/METU-NCC/MAT101/Derivatives/Product.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Exponential derivatives",
+      "path": "Contrib/METU-NCC/MAT101/Derivatives/Exp1.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "integrals": [
+    {
+      "title": "Definite integrals",
+      "path": "Contrib/METU-NCC/MAT101/Integrals/Definite.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Definite integrals",
+      "path": "Contrib/METU-NCC/MAT119/Chapter_5/2_Definite.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Polynomial definite integral",
+      "path": "Contrib/UCalgary/249-13-0-0-C/13-1-0-Ap-C/13-1-1-Ap-C-poly-definite-jms-1.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "multivariable": [
+    {
+      "title": "Partial derivatives",
+      "path": "Contrib/Hope/Multi2/10-02-MV-partial-derivatives/Partial-derivative-definition-01.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Partial derivatives",
+      "path": "Contrib/Hope/Multi2/10-02-MV-partial-derivatives/Partial-derivative-definition-02.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Partial derivatives",
+      "path": "Contrib/FortLewis/Calc3/14-1-Partial-derivatives/HGM4-14-1-02-The-partial-derivative.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "linear-algebra": [
+    {
+      "title": "Compute a determinant",
+      "path": "Contrib/MountAllison/3-2_Determinants/compute_determinant_2x2.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Compute a determinant",
+      "path": "Contrib/MountAllison/3-2_Determinants/compute_determinant_3x3.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Determinant of a product",
+      "path": "Contrib/MountAllison/3-2_Determinants/determinant_of_products.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "probability-statistics": [
+    {
+      "title": "Probability",
+      "path": "Contrib/METU-NCC/MAT101/Chapter8/Probability-1.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Probability",
+      "path": "Contrib/METU-NCC/MAT101/Chapter8/Probability-3.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Statistics and probability",
+      "path": "Contrib/PCC/Statistics/BasicProbability/10Stats_12_Probability.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "discrete-math": [
+    {
+      "title": "Counting with combinatorics",
+      "path": "Contrib/Mizzou/Finite_Math/Combinatorics/HowManyWays1.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Counting with combinatorics",
+      "path": "Contrib/Mizzou/Finite_Math/Combinatorics/HowManyWays2.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Bit strings",
+      "path": "Contrib/NUIG/DiscreteMaths/BitStrings1_OPL.pg",
+      "difficulty": "challenge"
+    }
+  ],
+  "differential-equations": [
+    {
+      "title": "First-order differential equation",
+      "path": "Contrib/CSUN/Differential_Equations/First_Order_ODE_1.pg",
+      "difficulty": "easy"
+    },
+    {
+      "title": "Differential equation series solution",
+      "path": "Contrib/CSUN/Differential_Equations/Series_Solution_1.pg",
+      "difficulty": "medium"
+    },
+    {
+      "title": "Differential equation series solution",
+      "path": "Contrib/CSUN/Differential_Equations/Series_Solution_2.pg",
+      "difficulty": "challenge"
+    }
+  ]
+}
