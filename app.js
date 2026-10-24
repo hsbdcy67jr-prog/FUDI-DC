@@ -363,7 +363,7 @@ function setView(view, options = {}) {
   const selected = document.getElementById(`view-${view}`);
   if (selected) selected.classList.add("is-visible");
   document.querySelectorAll(".nav-link").forEach(button => button.classList.toggle("is-active", button.dataset.view === view));
-  const title = { overview: "Overview", learn: "Learn", practice: "Daily practice", notebook: "Notebook", progress: "Progress" }[view];
+  const title = { overview: "Overview", learn: "Learn", practice: "Practice + notebook", notebook: "Notebook", progress: "Progress" }[view];
   document.getElementById("crumb-current").textContent = options.title || title;
   document.getElementById("sidebar").classList.remove("is-open");
   if (options.updateHash !== false) history.replaceState(null, "", `#${view}`);
