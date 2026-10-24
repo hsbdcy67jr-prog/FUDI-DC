@@ -120,13 +120,14 @@ final class FUDIWebView: NSObject, WKScriptMessageHandler {
             let resultBase64 = Data(value.utf8).base64EncodedString()
             let requestBase64 = Data(requestID.utf8).base64EncodedString()
             let script = "if (window.FudiAIResult) window.FudiAIResult(atob('\(requestBase64)'), JSON.parse(atob('\(resultBase64)')));"
-            try? await view.evaluateJavaScript(script)
+            _ = try? await view.evaluateJavaScript(script)
         }
     }
 }
 
 actor LocalFeedbackEngine {
-    private var session: ChatSession?
+    private var modelContainer: ModelContainer?
+    private var modelLoadingTask: Task<ModelContainer, Error>?
 
     func review(imageDataURL: String, question: String) async throws -> Data {
         #if !arch(arm64)
@@ -136,14 +137,8 @@ actor LocalFeedbackEngine {
               let image = Data(base64Encoded: String(imageDataURL[imageDataURL.index(after: comma)...]))
         else { throw LocalAIError.invalidImage }
 
-        if session == nil {
-            let model = try await loadModel(
-                from: #hubDownloader(),
-                using: #huggingFaceTokenizerLoader(),
-                id: modelID
-            )
-            session = ChatSession(model)
-        }
+        let model = try await modelContainerForReview()
+        let session = ChatSession(model)
 
         let temporaryImage = FileManager.default.temporaryDirectory
             .appendingPathComponent("fudi-review-\(UUID().uuidString).png")
@@ -154,7 +149,7 @@ actor LocalFeedbackEngine {
         Review this handwritten math work for the question: \(question.prefix(500))
         Return JSON only, shaped like {"summary":"short supportive feedback","marks":[{"type":"note","x":0.5,"y":0.5,"text":"short note"}]}. Use at most 4 marks. Coordinates are fractions from 0 to 1 across the page. Point to the first likely incorrect step when visible. Never invent steps; if uncertain, say so and leave marks empty. Keep each note under 120 characters.
         """
-        let answer = try await session!.respond(to: prompt, image: .url(temporaryImage))
+        let answer = try await session.respond(to: prompt, image: .url(temporaryImage))
         guard let json = extractJSONObject(answer.data(using: .utf8) ?? Data()) else {
             throw LocalAIError.invalidFeedback
         }
@@ -163,6 +158,33 @@ actor LocalFeedbackEngine {
         result["summary"] = String((result["summary"] as? String ?? "Check each suggested step carefully.").prefix(300))
         return try JSONSerialization.data(withJSONObject: result)
         #endif
+    }
+
+    private func modelContainerForReview() async throws -> ModelContainer {
+        if let modelContainer { return modelContainer }
+        let task: Task<ModelContainer, Error>
+        if let modelLoadingTask {
+            task = modelLoadingTask
+        } else {
+            let newTask = Task {
+                try await loadModel(
+                    from: #hubDownloader(),
+                    using: #huggingFaceTokenizerLoader(),
+                    id: modelID
+                )
+            }
+            modelLoadingTask = newTask
+            task = newTask
+        }
+        do {
+            let loaded = try await task.value
+            modelContainer = loaded
+            modelLoadingTask = nil
+            return loaded
+        } catch {
+            modelLoadingTask = nil
+            throw error
+        }
     }
 
     private func extractJSONObject(_ data: Data) -> Data? {
