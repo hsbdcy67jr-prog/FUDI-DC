@@ -29,10 +29,16 @@
     });
   }
 
+  function withTimeout(promise, milliseconds, message) {
+    let timer;
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), milliseconds); });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
   async function readAllPages() {
-    const db = await openDatabase();
+    const db = await withTimeout(openDatabase(), 5000, "Notebook storage took too long to open");
     const tx = db.transaction(STORE_NAME, "readonly");
-    return requestResult(tx.objectStore(STORE_NAME).getAll());
+    return withTimeout(requestResult(tx.objectStore(STORE_NAME).getAll()), 5000, "Notebook storage took too long to respond");
   }
 
   async function writePage(page) {
