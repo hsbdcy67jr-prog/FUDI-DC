@@ -24,7 +24,7 @@ Build the Apple Silicon app and disk image with `./macos/package-dmg.sh`. GitHub
 
 The renderer and small API run as separate, public Cloud Run services with request-based billing, scale-to-zero, and maximum instance counts. The API is capped at one instance; cloud AI remains disabled by the deployment script. Configure billing budget alerts before enabling any paid feedback provider, then run [api/deploy.sh](api/deploy.sh). Deployment requires an authenticated Google Cloud project, Docker, and Artifact Registry access. After deploying, set `window.FUDI_API_BASE` in `api-config.js` to the printed API origin.
 
-The live public front end is [FUDI-DC on GitHub Pages](https://hsbdcy67jr-prog.github.io/FUDI-DC/). The final product changes are on the `codex/fudi-final-product` branch pending review and Pages source configuration; this link may continue to serve the earlier web build until the new branch is published.
+The live public front end is [FUDI-DC on GitHub Pages](https://hsbdcy67jr-prog.github.io/FUDI-DC/). GitHub Pages is publishing the updated web app from the existing `codex/fudi-web-v1` source branch. The same changes are under review in [pull request #1](https://github.com/hsbdcy67jr-prog/FUDI-DC/pull/1). Curated practice works without the Cloud Run services; live OPL questions remain unavailable until those services are deployed.
 
 ## Privacy and licenses
 

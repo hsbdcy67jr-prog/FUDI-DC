@@ -2,7 +2,8 @@ name: Build Apple Silicon Mac app
 
 on:
   push:
-    branches: [codex/fudi-final-product]
+    branches: [main]
+  workflow_dispatch:
   pull_request:
     branches: [main]
 
