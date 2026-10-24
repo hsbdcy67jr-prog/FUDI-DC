@@ -4,7 +4,7 @@ FUDI is a browser based math learning space for calculus foundations, multivaria
 
 ## Use the app
 
-Open `index.html` in a modern browser. No build step or account is required. Practice questions are generated from authored math rules; answer checks, hints, and worked solutions run in the browser. Spoken explanations use the browser's speech playback when available.
+Open `index.html` in a modern browser. No build step or account is required. Practice questions are generated reproducibly from authored math rules using a sequence saved in this browser; answer checks, hints, and worked solutions run in the browser. Spoken explanations use the browser's speech playback when available.
 
 Notebook pages and practice progress are stored locally in the current browser. There is no account, cloud sync, notebook transfer, handwriting recognition, or AI feedback in the web release. The later Mac notebook will keep its data separate.
 

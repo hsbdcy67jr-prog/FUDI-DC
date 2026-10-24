@@ -22,6 +22,7 @@ function emptyState() {
     version: 1,
     attempts: 0,
     correct: 0,
+    problemSequence: 0,
     practiceDays: [],
     completedLessons: [],
     history: [],
@@ -35,6 +36,7 @@ function readState() {
     const saved = JSON.parse(localStorage.getItem(FUDI_STATE_KEY) || "null");
     if (!saved || saved.version !== 1) return emptyState();
     const restored = { ...emptyState(), ...saved };
+    if (!Number.isInteger(restored.problemSequence) || restored.problemSequence < 0) restored.problemSequence = 0;
     for (const field of ["practiceDays", "completedLessons", "history"]) {
       if (!Array.isArray(restored[field])) restored[field] = [];
     }
@@ -173,10 +175,22 @@ function topicProgress(topic) {
   return logs.length ? Math.min(100, Math.round(logs.filter(item => item.correct).length / 5 * 100)) : 0;
 }
 
-function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+let questionRandomState = 1;
+function seedQuestionRandom(seed) {
+  questionRandomState = 2166136261;
+  for (const character of seed) questionRandomState = Math.imul(questionRandomState ^ character.charCodeAt(0), 16777619);
+  questionRandomState >>>= 0;
+}
+function rand(min, max) {
+  questionRandomState = (Math.imul(1664525, questionRandomState) + 1013904223) >>> 0;
+  return Math.floor(questionRandomState / 4294967296 * (max - min + 1)) + min;
+}
 function numberText(value) { return String(Number.isInteger(value) ? value : Number(value.toFixed(2))); }
 
 function buildQuestion(topic, difficulty) {
+  const sequence = state.problemSequence;
+  state.problemSequence += 1;
+  seedQuestionRandom(`${topic}|${difficulty}|${sequence}`);
   const level = difficulty;
   let q;
   if (topic === "foundations") {
@@ -246,7 +260,7 @@ function buildQuestion(topic, difficulty) {
       q = { prompt: `Multiply the matrix by vector v: [[${matrix.map(row => row.join(", ")).join("], [")}]] · (${vector.join(", ")}). Enter the result as three numbers.`, answer: ans, hint: `Take the dot product of each matrix row with the vector.`, solution: `Row products give (${ans.join(", ")}).` };
     }
   }
-  return { ...q, topic, difficulty, id: `${topic}-${Date.now()}-${Math.random().toString(16).slice(2)}` };
+  return { ...q, topic, difficulty, id: `${topic}-${difficulty}-${sequence}` };
 }
 
 function formatPrompt(question) { return escapeHtml(question.prompt).replace(/∫/g, "∫").replace(/∇/g, "∇"); }
@@ -431,6 +445,7 @@ function renderPractice() {
     document.getElementById("practice-footer-count").textContent = "A fresh problem for you";
     currentQuestion = q;
     questionHasCorrectAnswer = false;
+    saveState();
   };
   document.getElementById("generate-question").addEventListener("click", generate);
   document.getElementById("practice-hint-button").addEventListener("click", () => {
@@ -511,6 +526,7 @@ function openPractice(topic = state.selectedTopic) {
 
 function renderDashboardQuestion() {
   const q = buildQuestion("derivatives", "easy");
+  saveState();
   setQuestion(q);
 }
 
