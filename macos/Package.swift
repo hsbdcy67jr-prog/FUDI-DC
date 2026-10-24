@@ -8,7 +8,7 @@ let package = Package(
         .executable(name: "FUDI-DC", targets: ["FudiDCMac"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ml-explore/mlx-swift-lm", .upToNextMinor(from: "3.32.3")),
+        .package(url: "https://github.com/ml-explore/mlx-swift-lm", .upToNextMinor(from: "3.31.4")),
         .package(url: "https://github.com/huggingface/swift-huggingface", from: "0.9.0"),
         .package(url: "https://github.com/huggingface/swift-transformers", from: "1.3.0"),
     ],
