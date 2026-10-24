@@ -306,6 +306,9 @@
     originalRenderNotebook();
   };
   Object.assign(topicNames, window.FudiQuestionCatalog ? window.FudiQuestionCatalog.topics : {});
-  if (location.hash === "#practice") renderPracticeWorkbench();
+  topicList.splice(0, topicList.length, ...Object.keys(topicNames));
   window.FudiWorkbench = { renderPractice: renderPracticeWorkbench, loadLiveQuestion };
+  if (location.hash === "#practice") renderPracticeWorkbench();
+  else if (location.hash === "#learn") renderLearn();
+  else if (location.hash === "#progress") renderProgress();
 })();
