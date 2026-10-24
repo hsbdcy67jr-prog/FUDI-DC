@@ -1,3 +1,4 @@
+Warning: fs was declared with const; use let for reassignable variables.
 import AppKit
 import Foundation
 import HuggingFace
@@ -167,10 +168,8 @@ actor LocalFeedbackEngine {
             task = modelLoadingTask
         } else {
             let newTask = Task {
-                try await loadModel(
-                    from: #hubDownloader(),
-                    using: #huggingFaceTokenizerLoader(),
-                    id: modelID
+                try await #huggingFaceLoadModelContainer(
+                    configuration: VLMRegistry.qwen3VL4BInstruct4Bit
                 )
             }
             modelLoadingTask = newTask
