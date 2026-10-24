@@ -213,6 +213,7 @@
     let currentStroke = null;
     let redoStack = [];
     let saveTimer;
+    let addingPage = false;
     let fallbackMode = false;
     let cssWidth = 0;
     let cssHeight = 0;
@@ -380,17 +381,27 @@
       scheduleSave();
     });
 
-    root.querySelector("#add-notebook-page").addEventListener("click", async () => {
-      finishStroke();
-      await persistNow();
-      const nextNumber = pages.length + 1;
-      const page = makePage(`Page ${nextNumber}`);
-      pages.push(page);
-      activePageId = page.id;
-      redoStack = [];
-      renderTabs();
-      resizeCanvas();
-      scheduleSave();
+    const addPageButton = root.querySelector("#add-notebook-page");
+    addPageButton.addEventListener("click", async () => {
+      if (addingPage) return;
+      addingPage = true;
+      addPageButton.disabled = true;
+      try {
+        finishStroke();
+        await persistNow();
+        const nextNumber = pages.length + 1;
+        const page = makePage(`Page ${nextNumber}`);
+        pages.push(page);
+        activePageId = page.id;
+        try { localStorage.setItem("fudi-dc-current-notebook-page", activePageId); } catch { /* The selected page preference is optional. */ }
+        redoStack = [];
+        renderTabs();
+        resizeCanvas();
+        scheduleSave();
+      } finally {
+        addingPage = false;
+        addPageButton.disabled = false;
+      }
     });
     root.querySelector("#rename-notebook-page").addEventListener("click", async () => {
       const page = activePage();
