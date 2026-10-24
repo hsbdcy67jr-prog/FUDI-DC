@@ -28,6 +28,8 @@ function emptyState() {
     history: [],
     selectedTopic: "derivatives",
     selectedDifficulty: "easy",
+    currentPracticeQuestion: null,
+    currentPracticeSolved: false,
   };
 }
 

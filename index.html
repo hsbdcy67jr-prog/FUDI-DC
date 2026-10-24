@@ -4,16 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f6f7f4" />
-    <meta name="description" content="A calmer way to build your math practice. Learn, solve, and see your progress with FUDI." />
-    <title>FUDI — Math, made clearer</title>
-    <link rel="stylesheet" href="styles.css?v=2026-10-24-1" />
+    <meta name="description" content="A calmer math learning space with guided practice, a drawable notebook, and progress saved on your device." />
+    <title>FUDI-DC — Math, made clearer</title>
+    <link rel="stylesheet" href="styles.css?v=2026-10-24-2" />
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar" id="sidebar">
         <a class="brand" href="#overview" aria-label="FUDI home" data-view="overview">
           <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
-          <span class="brand-name">fudi<span>.</span></span>
+          <span class="brand-name">fudi<span>-dc</span></span>
           <span class="brand-tag">MATH STUDIO</span>
         </a>
 
@@ -21,7 +21,7 @@
         <nav class="main-nav" aria-label="Main navigation">
           <button class="nav-link is-active" data-view="overview"><span class="nav-icon icon-grid">▦</span><span>Overview</span></button>
           <button class="nav-link" data-view="learn"><span class="nav-icon">◫</span><span>Learn</span><span class="nav-count">8</span></button>
-          <button class="nav-link" data-view="practice"><span class="nav-icon">✳</span><span>Daily practice</span></button>
+          <button class="nav-link" data-view="practice"><span class="nav-icon">✳</span><span>Practice + notebook</span></button>
           <button class="nav-link" data-view="notebook"><span class="nav-icon">▤</span><span>My notebook</span></button>
           <button class="nav-link" data-view="progress"><span class="nav-icon">⌁</span><span>Progress</span></button>
         </nav>
@@ -105,7 +105,10 @@
       </main>
     </div>
     <div class="toast" id="toast" role="status"></div>
-    <script src="notebook.js?v=2026-10-24-1" defer></script>
-    <script src="app.js?v=2026-10-24-1" defer></script>
+    <script src="notebook.js?v=2026-10-24-2" defer></script>
+    <script src="app.js?v=2026-10-24-2" defer></script>
+    <script src="catalog.js?v=2026-10-24-2" defer></script>
+    <script src="api-config.js?v=2026-10-24-2" defer></script>
+    <script src="workbench.js?v=2026-10-24-2" defer></script>
   </body>
 </html>

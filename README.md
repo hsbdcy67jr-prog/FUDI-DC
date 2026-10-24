@@ -1,26 +1,33 @@
-# FUDI — Math, made clearer
+# FUDI-DC — Math, made clearer
 
-FUDI is a browser based math learning space for calculus foundations, multivariable calculus, and linear algebra. This first web release includes short lessons, generated practice, a drawable notebook, and local progress tracking.
+FUDI-DC brings a math question and a drawable working page into one learning workspace. The public web front end includes short lessons, deterministic practice, answer checks, hints, worked solutions, browser speech, a multi-page notebook, and progress saved on the device.
 
-## Use the app
+The curated bank covers foundations, algebra, geometry, trigonometry, precalculus, limits, derivatives, integrals, multivariable calculus, linear algebra, probability and statistics, discrete mathematics, and differential equations. Each area has easy, medium, and challenge question generators.
 
-Open `index.html` in a modern browser. No build step or account is required. Practice questions are generated reproducibly from authored math rules using a sequence saved in this browser; answer checks, hints, and worked solutions run in the browser. Spoken explanations use the browser's speech playback when available.
+## Use the web app
 
-Notebook pages and practice progress are stored locally in the current browser. There is no account, cloud sync, notebook transfer, handwriting recognition, or AI feedback in the web release. The later Mac notebook will keep its data separate.
+Open `index.html` in a modern browser. No account or build step is required. Practice pages are linked to their questions and autosaved in that browser. A separate general notebook is available for notes that are not tied to a problem. Use pen, highlighter, eraser, undo/redo, page tabs, and PNG/PDF export. Notebook data uses browser storage; progress uses local storage.
 
-## Notebook
+## Live questions and feedback
 
-Create and rename pages, draw with a mouse, stylus, or finger, choose pen/highlighter/eraser and ink color, undo or redo strokes, then export the current page as PNG or all pages as a PDF.
+Randomized WeBWorK Open Problem Library questions are enabled when the Cloud Run API and renderer are deployed and `FUDI_API_BASE` is set in `api-config.js`. If the service is absent, the curated bank continues to work. Live answers are submitted to the WeBWorK renderer through a no-store proxy, and the UI credits the selected source under the OPL's CC BY-NC-SA 3.0 terms. Keep the public project noncommercial while including OPL content.
 
-## Publish with GitHub Pages
+Web AI feedback is disabled by default. The optional Gemini route requires paid-tier credentials, a configured request cap and spend limit, and a fresh learner confirmation for every upload. The FUDI-DC API does not persist notebook images, answer submissions, or feedback responses. Cloud Run platform logs may retain ordinary request metadata; application code does not log request bodies. Follow [Google's API-key guidance](https://ai.google.dev/gemini-api/docs/api-key) and use only author-created sample pages during evaluation.
 
-1. In the repository, open **Settings → Pages**.
-2. Under **Build and deployment**, choose **Deploy from a branch**.
-3. Select the `codex/fudi-web-v1` branch and the `/(root)` folder, then save.
-4. GitHub Pages will publish the app at `https://hsbdcy67jr-prog.github.io/FUDI-DC/` after its first deployment completes.
+## Apple Silicon Mac app
 
-The repository and published site are public. Notebook pages and practice history remain in each learner's browser.
+The Mac app bundles the same workspace in a native WebKit shell and stores notebook/progress data separately in the app's local WebKit store. The first local AI review downloads a quantized Qwen3-VL model; later reviews run on-device through MLX. Feedback notes remain separate from learner ink and can be edited, moved, deleted, undone, or redone. Local feedback is experimental and must be checked by the learner. Intel Macs are out of scope.
 
-## Later phases
+Build the Apple Silicon app and disk image with `./macos/package-dmg.sh`. GitHub Actions builds and uploads the `.dmg` as a workflow artifact. The current package is ad-hoc signed and not notarized; see [macOS/README](macos/README.md) for build and installation details.
 
-The next planned phase is packaging the shared experience as a Mac app and `.dmg`. On-device AI feedback for notebook work is a separate later investigation; web v1 does not send notebook pages anywhere.
+## Deploy the live service
+
+The renderer and small API run as separate, public Cloud Run services with request-based billing, scale-to-zero, and maximum instance counts. The API is capped at one instance; cloud AI remains disabled by the deployment script. Configure billing budget alerts before enabling any paid feedback provider, then run [api/deploy.sh](api/deploy.sh). Deployment requires an authenticated Google Cloud project, Docker, and Artifact Registry access. After deploying, set `window.FUDI_API_BASE` in `api-config.js` to the printed API origin.
+
+The live public front end is [FUDI-DC on GitHub Pages](https://hsbdcy67jr-prog.github.io/FUDI-DC/). The final product changes are on the `codex/fudi-final-product` branch pending review and Pages source configuration; this link may continue to serve the earlier web build until the new branch is published.
+
+## Privacy and licenses
+
+There are no accounts, cloud sync, or transfer features. Web and Mac notebook/progress stores are separate. External live-answer checks go to the renderer. Notebook snapshots go to a cloud provider only after a per-request upload choice and only when the paid service is configured. The WeBWorK OPL notice and selected problem references are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Copy-ready launch and Projects-section drafts are in [LINKEDIN.md](LINKEDIN.md). They are drafts only.

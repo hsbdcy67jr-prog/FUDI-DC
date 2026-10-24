@@ -1,6 +1,6 @@
 (() => {
   const DB_NAME = "fudi-dc-notebook";
-  const DB_VERSION = 1;
+  const DB_VERSION = 2;
   const STORE_NAME = "pages";
   const FALLBACK_KEY = "fudi-dc-notebook-fallback-v1";
   let dbPromise;
@@ -57,16 +57,29 @@
     });
   }
 
-  function fallbackPages() {
-    try { return JSON.parse(localStorage.getItem(FALLBACK_KEY) || "[]"); } catch { return []; }
+  function fallbackPages(scope = "general") {
+    try {
+      const scoped = JSON.parse(localStorage.getItem(FALLBACK_KEY + ":" + scope) || "null");
+      if (Array.isArray(scoped)) return scoped;
+      if (scope === "general") return JSON.parse(localStorage.getItem(FALLBACK_KEY) || "[]");
+      return [];
+    } catch { return []; }
   }
 
   function localId() {
     return window.crypto && crypto.randomUUID ? crypto.randomUUID() : `page-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
-  function makePage(title = "Page 1") {
-    return { id: localId(), title, createdAt: Date.now(), updatedAt: Date.now(), strokes: [] };
+  function makePage(title = "Page 1", scope = "general", question = null) {
+    const page = { id: localId(), title, scope, createdAt: Date.now(), updatedAt: Date.now(), strokes: [], aiMarks: [], order: [] };
+    if (question) page.question = { id: question.id, prompt: String(question.prompt || "").slice(0, 400), topic: question.topic, difficulty: question.difficulty };
+    return page;
+  }
+
+  function ensurePageCollections(page) {
+    if (!Array.isArray(page.strokes)) page.strokes = [];
+    if (!Array.isArray(page.aiMarks)) page.aiMarks = [];
+    if (!Array.isArray(page.order)) page.order = page.strokes.map(stroke => ({ type: "stroke", id: stroke.id }));
   }
 
   function safePageTitle(title) {
@@ -125,6 +138,45 @@
   function drawPage(context, page, width, height) {
     paintBackground(context, width, height, context.canvas.width, context.canvas.height);
     (page?.strokes || []).forEach(stroke => drawStroke(context, stroke, width, height));
+    (page?.aiMarks || []).forEach(mark => drawAIMark(context, mark, width, height));
+  }
+
+  function drawAIMark(context, mark, width, height) {
+    const x = Math.max(0, Math.min(1, Number(mark.x) || 0)) * width;
+    const y = Math.max(0, Math.min(1, Number(mark.y) || 0)) * height;
+    context.save();
+    context.globalCompositeOperation = "source-over";
+    context.globalAlpha = 1;
+    if (mark.type === "highlight") {
+      context.fillStyle = "rgba(245, 196, 88, 0.30)";
+      context.fillRect(x - 18, y - 12, 160, 26);
+      context.strokeStyle = "#bb8754";
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(x - 20, y + 17);
+      context.lineTo(x + 140, y + 17);
+      context.stroke();
+    } else {
+      const text = String(mark.text || "Check this step").slice(0, 160);
+      context.font = "600 14px system-ui, sans-serif";
+      const boxWidth = Math.min(260, Math.max(150, context.measureText(text).width + 24));
+      const boxX = Math.min(Math.max(8, x), Math.max(8, width - boxWidth - 8));
+      const boxY = Math.min(Math.max(8, y), Math.max(8, height - 54));
+      context.fillStyle = "rgba(255, 250, 237, 0.97)";
+      context.strokeStyle = "#c68c52";
+      context.lineWidth = 1.5;
+      context.beginPath();
+      context.roundRect(boxX, boxY, boxWidth, 42, 8);
+      context.fill();
+      context.stroke();
+      context.fillStyle = "#684c32";
+      context.fillText(text, boxX + 12, boxY + 26, boxWidth - 24);
+      context.fillStyle = "#c68c52";
+      context.beginPath();
+      context.arc(x, y, 5, 0, Math.PI * 2);
+      context.fill();
+    }
+    context.restore();
   }
 
   function saveBlob(blob, filename) {
@@ -198,7 +250,9 @@
     return new Blob([joinBytes(chunks)], { type: "application/pdf" });
   }
 
-  async function mount(root) {
+  async function mount(root, options = {}) {
+    const scope = options.scope || "general";
+    const currentPageKey = "fudi-dc-current-notebook-page-" + scope;
     const canvas = root.querySelector("#notebook-canvas");
     const context = canvas.getContext("2d");
     const pagesElement = root.querySelector("#notebook-pages");
@@ -206,10 +260,11 @@
     const pageCountElement = root.querySelector("#notebook-page-count");
     let pages = [];
     let activePageId = "";
-    try { activePageId = localStorage.getItem("fudi-dc-current-notebook-page") || ""; } catch { /* A blocked preference does not prevent notebook use. */ }
+    try { activePageId = localStorage.getItem(currentPageKey) || (scope === "general" ? localStorage.getItem("fudi-dc-current-notebook-page") : "") || ""; } catch { /* A blocked preference does not prevent notebook use. */ }
     let activeTool = "pen";
     let inkColor = "#34463b";
     let strokeWidth = 3;
+    let movingAIMark = false;
     let currentStroke = null;
     let redoStack = [];
     let saveTimer;
@@ -230,7 +285,7 @@
       activePage().updatedAt = Date.now();
       try {
         if (fallbackMode) {
-          localStorage.setItem(FALLBACK_KEY, JSON.stringify(pages));
+          localStorage.setItem(FALLBACK_KEY + ":" + scope, JSON.stringify(pages));
         } else {
           await Promise.all(pages.map(writePage));
         }
@@ -238,7 +293,7 @@
       } catch (error) {
         fallbackMode = true;
         try {
-          localStorage.setItem(FALLBACK_KEY, JSON.stringify(pages));
+          localStorage.setItem(FALLBACK_KEY + ":" + scope, JSON.stringify(pages));
           setStatus("Saved in browser storage");
         } catch {
           setStatus("Storage is full — export a copy");
@@ -273,7 +328,7 @@
     function showPage(id) {
       if (!pages.some(page => page.id === id)) return;
       activePageId = id;
-      try { localStorage.setItem("fudi-dc-current-notebook-page", activePageId); } catch { /* Local preference is optional. */ }
+      try { localStorage.setItem(currentPageKey, activePageId); } catch { /* Local preference is optional. */ }
       redoStack = [];
       renderTabs();
       resizeCanvas();
@@ -311,10 +366,19 @@
     canvas.addEventListener("pointerdown", event => {
       if (event.button !== undefined && event.button !== 0) return;
       event.preventDefault();
-      canvas.setPointerCapture(event.pointerId);
       const point = pointFromEvent(event);
+      if (movingAIMark) {
+        const mark = activePage()?.aiMarks?.[activePage().aiMarks.length - 1];
+        if (mark) { mark.x = point.x; mark.y = point.y; resizeCanvas(); scheduleSave(); }
+        movingAIMark = false;
+        canvas.classList.remove("is-moving-ai-mark");
+        return;
+      }
+      canvas.setPointerCapture(event.pointerId);
       currentStroke = { id: localId(), tool: activeTool, color: inkColor, width: strokeWidth, points: [point] };
+      ensurePageCollections(activePage());
       activePage().strokes.push(currentStroke);
+      activePage().order.push({ type: "stroke", id: currentStroke.id });
       drawSegment(currentStroke, point, null);
     });
 
@@ -362,21 +426,46 @@
       root.querySelector("#width-sample").style.width = `${Math.max(4, strokeWidth)}px`;
       root.querySelector("#width-sample").style.height = `${Math.max(4, strokeWidth)}px`;
     });
+    root.querySelector("#remove-ai-feedback")?.addEventListener("click", removeLastAIMark);
+    root.querySelector("#edit-ai-feedback")?.addEventListener("click", async () => {
+      const mark = activePage()?.aiMarks?.[activePage().aiMarks.length - 1];
+      if (!mark) return;
+      const proposed = window.prompt("Edit the last AI note", mark.text || "");
+      if (proposed === null) return;
+      mark.text = String(proposed).replace(/[<>]/g, "").slice(0, 160);
+      resizeCanvas();
+      await persistNow();
+    });
+    root.querySelector("#move-ai-feedback")?.addEventListener("click", () => {
+      if (!activePage()?.aiMarks?.length) return;
+      movingAIMark = true;
+      canvas.classList.add("is-moving-ai-mark");
+      setStatus("Click the page where the last AI note should move");
+    });
 
     root.querySelector("#undo-stroke").addEventListener("click", () => {
       finishStroke();
       const page = activePage();
-      if (!page?.strokes.length) return;
-      redoStack.push(page.strokes.pop());
+      if (!page) return;
+      ensurePageCollections(page);
+      const action = page.order.pop();
+      if (!action) return;
+      const collection = action.type === "mark" ? page.aiMarks : page.strokes;
+      const index = collection.findIndex(item => item.id === action.id);
+      if (index < 0) return;
+      redoStack.push({ type: action.type, value: collection.splice(index, 1)[0] });
       resizeCanvas();
       scheduleSave();
     });
     root.querySelector("#redo-stroke").addEventListener("click", () => {
       finishStroke();
       const page = activePage();
-      const stroke = redoStack.pop();
-      if (!stroke || !page) return;
-      page.strokes.push(stroke);
+      const action = redoStack.pop();
+      if (!action || !page) return;
+      ensurePageCollections(page);
+      if (action.type === "mark") page.aiMarks.push(action.value);
+      else page.strokes.push(action.value);
+      page.order.push({ type: action.type, id: action.value.id });
       resizeCanvas();
       scheduleSave();
     });
@@ -390,10 +479,10 @@
         finishStroke();
         await persistNow();
         const nextNumber = pages.length + 1;
-        const page = makePage(`Page ${nextNumber}`);
+        const page = makePage(`Page ${nextNumber}`, scope);
         pages.push(page);
         activePageId = page.id;
-        try { localStorage.setItem("fudi-dc-current-notebook-page", activePageId); } catch { /* The selected page preference is optional. */ }
+        try { localStorage.setItem(currentPageKey, activePageId); } catch { /* The selected page preference is optional. */ }
         redoStack = [];
         renderTabs();
         resizeCanvas();
@@ -418,6 +507,8 @@
       finishStroke();
       if (pages.length === 1) {
         page.strokes = [];
+        page.aiMarks = [];
+        page.order = [];
         page.title = "Page 1";
         redoStack = [];
         resizeCanvas();
@@ -462,24 +553,93 @@
     } else window.addEventListener("resize", resizeCanvas);
 
     try {
-      pages = await readAllPages();
+      pages = (await readAllPages()).filter(page => (page.scope || "general") === scope);
     } catch {
       fallbackMode = true;
-      pages = fallbackPages();
+      pages = fallbackPages(scope);
     }
-    if (!pages.length) pages = [makePage("Page 1")];
+    pages.forEach(ensurePageCollections);
+    if (!pages.length) pages = [makePage("Page 1", scope)];
     pages.sort((left, right) => left.createdAt - right.createdAt);
     if (!pages.some(page => page.id === activePageId)) activePageId = pages[0].id;
     renderTabs();
     requestAnimationFrame(resizeCanvas);
-    try { localStorage.setItem("fudi-dc-current-notebook-page", activePageId); } catch { /* Optional. */ }
+    try { localStorage.setItem(currentPageKey, activePageId); } catch { /* Optional. */ }
     if (fallbackMode) setStatus("Saved in browser storage");
     else setStatus("Saved on this device");
 
-    return () => {
-      disposed = true;
-      clearTimeout(saveTimer);
-      observer?.disconnect();
+    function openQuestion(question) {
+      if (scope !== "practice" || !question) return Promise.resolve(null);
+      let page = pages.find(item => item.question && item.question.id === question.id);
+      if (!page) {
+        const topic = window.FudiQuestionCatalog?.topics?.[question.topic] || question.topic || "Practice";
+        const level = window.FudiQuestionCatalog?.difficultyNames?.[question.difficulty] || question.difficulty || "";
+        page = makePage(topic + " · " + level, scope, question);
+        pages.push(page);
+      } else {
+        page.question = { id: question.id, prompt: String(question.prompt || "").slice(0, 400), topic: question.topic, difficulty: question.difficulty };
+      }
+      ensurePageCollections(page);
+      activePageId = page.id;
+      try { localStorage.setItem(currentPageKey, activePageId); } catch { /* Optional. */ }
+      redoStack = [];
+      renderTabs();
+      resizeCanvas();
+      scheduleSave();
+      return Promise.resolve(page);
+    }
+
+    async function addAIMarks(marks, summary = "") {
+      const page = activePage();
+      if (!page || !Array.isArray(marks)) return false;
+      ensurePageCollections(page);
+      for (const source of marks.slice(0, 8)) {
+        const parsedX = Number(source.x), parsedY = Number(source.y);
+        const mark = {
+          id: localId(),
+          type: source.type === "highlight" ? "highlight" : "note",
+          x: Number.isFinite(parsedX) ? Math.max(0, Math.min(1, parsedX)) : 0.5,
+          y: Number.isFinite(parsedY) ? Math.max(0, Math.min(1, parsedY)) : 0.5,
+          text: String(source.text || summary || "Review this step").replace(/[<>]/g, "").slice(0, 160),
+        };
+        page.aiMarks.push(mark);
+        page.order.push({ type: "mark", id: mark.id });
+      }
+      redoStack = [];
+      resizeCanvas();
+      await persistNow();
+      return true;
+    }
+
+    async function removeLastAIMark() {
+      const page = activePage();
+      if (!page) return;
+      ensurePageCollections(page);
+      const actionIndex = page.order.map(action => action.type).lastIndexOf("mark");
+      if (actionIndex < 0) return;
+      const action = page.order.splice(actionIndex, 1)[0];
+      const markIndex = page.aiMarks.findIndex(mark => mark.id === action.id);
+      if (markIndex >= 0) page.aiMarks.splice(markIndex, 1);
+      redoStack = [];
+      resizeCanvas();
+      await persistNow();
+    }
+
+    return {
+      openQuestion,
+      addAIMarks,
+      removeLastAIMark,
+      exportImage: () => canvas.toDataURL("image/png"),
+      getActivePage: () => activePage(),
+      dispose: () => {
+        if (disposed) return Promise.resolve();
+        finishStroke();
+        clearTimeout(saveTimer);
+        const pendingSave = persistNow();
+        disposed = true;
+        observer?.disconnect();
+        return pendingSave;
+      },
     };
   }
 

@@ -1,0 +1,32 @@
+name: Build Apple Silicon Mac app
+
+on:
+  push:
+    branches: [codex/fudi-final-product]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-dmg:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check app scripts and question bank
+        run: |
+          node --check app.js
+          node --check catalog.js
+          node --check workbench.js
+          node --check notebook.js
+          node --check api/server.mjs
+          node scripts/catalog-smoke.mjs
+      - name: Build app and disk image
+        run: ./macos/package-dmg.sh
+      - name: Upload disk image
+        uses: actions/upload-artifact@v4
+        with:
+          name: FUDI-DC-Apple-Silicon
+          path: dist/FUDI-DC.dmg
+          if-no-files-found: error
