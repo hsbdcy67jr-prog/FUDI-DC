@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import HuggingFace
 import MLXHuggingFace
 import MLXLMCommon
 import MLXVLM
@@ -119,7 +120,7 @@ final class FUDIWebView: NSObject, WKScriptMessageHandler {
             let resultBase64 = Data(value.utf8).base64EncodedString()
             let requestBase64 = Data(requestID.utf8).base64EncodedString()
             let script = "if (window.FudiAIResult) window.FudiAIResult(atob('\(requestBase64)'), JSON.parse(atob('\(resultBase64)')));"
-            view.evaluateJavaScript(script)
+            try? await view.evaluateJavaScript(script)
         }
     }
 }
