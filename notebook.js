@@ -565,7 +565,7 @@
       pages = fallbackPages(scope);
     }
     pages.forEach(ensurePageCollections);
-    if (!pages.length) pages = [makePage("Page 1", scope)];
+    if (!pages.length && scope === "general") pages = [makePage("Page 1", scope)];
     pages.sort((left, right) => left.createdAt - right.createdAt);
     if (!pages.some(page => page.id === activePageId)) activePageId = pages[0].id;
     renderTabs();
